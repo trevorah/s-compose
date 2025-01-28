@@ -46,3 +46,16 @@ const writable = sCompose(
   })
 );
 ```
+
+## API
+```ts
+function sCompose(...streams: TransformStream): TransformStream
+```
+
+```ts
+function sCompose(...streams: TransformStream, sink: WritableStream): WritableStream
+```
+
+```ts
+function sCompose(source: ReadableStream, ...streams: TransformStream): ReadableStream
+```
