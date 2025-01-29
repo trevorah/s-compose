@@ -1,15 +1,15 @@
 {
   "name": "s-compose",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compose web streams together",
   "homepage": "https://github.com/trevorah/s-compose#readme",
   "bugs": {
     "url": "https://github.com/trevorah/s-compose/issues"
   },
   "exports": {
-		"types": "./index.d.ts",
-		"default": "./index.js"
-	},
+    "types": "./index.d.ts",
+    "default": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trevorah/s-compose.git"
