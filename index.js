@@ -21,7 +21,15 @@ export default function sCompose(...streams) {
   throw new Error("Invalid streams");
 }
 
+/**
+ * Compose a chain of TransformStreams.
+ * @param {TransformStream[]} streams
+ * @returns {TransformStream}
+ */
 function composeTransformStreams(streams) {
+  if (streams.length === 0) {
+    return new TransformStream();
+  }
   const [first, ...rest] = streams;
 
   const lastReadable = rest.reduce(
@@ -38,9 +46,29 @@ function composeTransformStreams(streams) {
 function composeToWritable(streams, writable) {
   const transformStream = composeTransformStreams(streams);
 
-  transformStream.readable.pipeTo(writable).catch((e) => {});
+  const writer = transformStream.writable.getWriter();
 
-  return transformStream.writable;
+  let pipeToPromise;
+
+  const proxy = new WritableStream({
+    async start() {
+      pipeToPromise = transformStream.readable.pipeTo(writable);
+      await writer.ready;
+    },
+    async write(chunk) {
+      await writer.write(chunk);
+    },
+    async close() {
+      await writer.ready;
+      await writer.close();
+      await pipeToPromise;
+    },
+    async abort(reason) {
+      await writer.abort(reason);
+    },
+  });
+
+  return proxy;
 }
 
 function composeToReadable(readable, streams) {
